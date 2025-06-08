@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEKORA: Catalog</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+        nav { background: #878644; padding: 1em 0; }
+        nav ul { list-style: none; display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; padding: 0 2em; }
+        nav ul li { margin: 0 1.5em; }
+        nav ul li a { color: #fff; text-decoration: none; font-weight: bold; }
+        .nav-btn {
+            background: #393807;
+            color: #fff;
+            padding: 0.5em 1.2em;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .nav-btn span { margin-right: 0.5em; }
+        .container { max-width: 800px; margin: 2em auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+        h1 { margin-top: 0; }
+        .search-bar { display: flex; margin-bottom: 2em; }
+        .search-bar input[type="text"] {
+            flex: 1;
+            padding: 0.7em 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            font-size: 1em;
+            outline: none;
+        }
+        .search-bar button {
+            background: #393807;
+            color: #fff;
+            border: none;
+            padding: 0.7em 1.5em;
+            border-radius: 0 4px 4px 0;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .produk-list { display: flex; flex-wrap: wrap; gap: 1.5em; justify-content: center; }
+        .produk-item {
+            background: #fafafa;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            padding: 1em;
+            width: 180px;
+            text-align: center;
+        }
+        .produk-item img { width: 100%; border-radius: 6px; }
+        .produk-item h3 { font-size: 1.1em; margin: 0.7em 0 0.3em 0; }
+        .produk-item p { color: #393807; font-weight: bold; margin: 0.3em 0; }
+        .produk-item button {
+            background: #393807;
+            color: #fff;
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            width: 100%;
+        }
+        .produk-item button:hover { background: #8b8912; }
+    </style>
+</head>
+<body>
+    <nav>
+    <ul style="display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; padding: 0 2em;">
+        <!-- Logo di kiri -->
+        <li style="margin: 0;">
+            <a href="Homepage.html" style="display: flex; align-items: center;">
+                <img src="dekora.png" alt="Dekora Logo" style="height:32px; margin-right: 0.5em;">
+            </a>
+        </li>
+        <!-- Menu di kanan -->
+        <div style="display: flex; gap: 1.5em; align-items: center;">
+            <li>
+                <a href="catalog.html" style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
+                    <span style="margin-right: 0.5em;">🔍</span>View Catalog
+                </a>
+            </li>
+            <li>
+                <a href="cart.html" style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
+                    <span style="margin-right: 0.5em;">🛒</span>Cart
+                </a>
+            </li>
+            <li>
+                <a href="profile.html" style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
+                    <span style="margin-right: 0.5em;">👤</span>Profile
+                </a>
+            </li>
+        </div>
+    </ul>
+</nav>
+    <div class="container">
+        <h1>Catalog Produk</h1>
+        <form class="search-bar" id="searchForm" onsubmit="return false;">
+            <input type="text" id="searchInput" placeholder="Cari produk...">
+            <button type="submit">🔍 Cari</button>
+        </form>
+        <div class="produk-list" id="produkList">
+            <!-- Produk akan ditampilkan di sini -->
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2023 Tugas Besar. All rights reserved.</p>
+    </footer>
+    <script>
+        // Data produk statis
+        const produk = [
+            {
+                nama: "Produk A",
+                harga: "Rp 150.000",
+                img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=200&q=80"
+            },
+            {
+                nama: "Produk B",
+                harga: "Rp 200.000",
+                img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=200&q=80"
+            },
+            {
+                nama: "Produk C",
+                harga: "Rp 250.000",
+                img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=200&q=80"
+            },
+            {
+                nama: "Produk D",
+                harga: "Rp 180.000",
+                img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=200&q=80"
+            },
+            {
+                nama: "Produk E",
+                harga: "Rp 300.000",
+                img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=200&q=80"
+            }
+        ];
+
+        function tampilkanProduk(list) {
+            const produkList = document.getElementById('produkList');
+            produkList.innerHTML = '';
+            if (list.length === 0) {
+                produkList.innerHTML = '<p style="color:#888; width:100%; text-align:center;">Produk tidak ditemukan.</p>';
+                return;
+            }
+            list.forEach(p => {
+                produkList.innerHTML += `
+                    <div class="produk-item">
+                        <img src="${p.img}" alt="${p.nama}">
+                        <h3>${p.nama}</h3>
+                        <p>${p.harga}</p>
+                        <button>Tambah ke Cart</button>
+                    </div>
+                `;
+            });
+        }
+
+        // Tampilkan semua produk saat halaman dibuka
+        tampilkanProduk(produk);
+
+        // Fitur search
+        document.getElementById('searchForm').addEventListener('submit', function() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const hasil = produk.filter(p => p.nama.toLowerCase().includes(keyword));
+            tampilkanProduk(hasil);
+        });
+    </script>
+</body>
+</html>

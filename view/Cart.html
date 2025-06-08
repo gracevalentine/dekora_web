@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEKORA: Cart</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+        nav { background: #878644; padding: 1em 0; }
+        nav ul { list-style: none; display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; padding: 0 2em; }
+        nav ul li { margin: 0 1.5em; }
+        nav ul li a { color: #fff; text-decoration: none; font-weight: bold; }
+        .nav-btn {
+            background: #393807;
+            color: #fff;
+            padding: 0.5em 1.2em;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .nav-btn span { margin-right: 0.5em; }
+        .container { max-width: 800px; margin: 2em auto; background: #fff; padding: 2em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+        h1 { margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 2em; }
+        th, td { padding: 0.8em; border-bottom: 1px solid #e0e0e0; text-align: left; }
+        th { background: #f2f2f2; }
+        .total-row td { font-weight: bold; }
+        .checkout-btn { background: #393807; color: #fff; border: none; padding: 0.7em 2em; border-radius: 4px; font-size: 1em; cursor: pointer; margin-top: 1.5em; }
+        .checkout-btn:hover { background: #8b8912; }
+        .empty-cart { text-align: center; color: #888; margin: 3em 0; }
+    </style>
+</head>
+<body>
+    <nav>
+    <ul style="display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; padding: 0 2em;">
+        <!-- Logo di kiri -->
+        <li style="margin: 0;">
+            <a href="Homepage.html" style="display: flex; align-items: center;">
+                <img src="dekora.png" alt="Dekora Logo" style="height:32px; margin-right: 0.5em;">
+            </a>
+        </li>
+        <!-- Menu di kanan -->
+        <div style="display: flex; gap: 1.5em; align-items: center;">
+            <li>
+                <a href="catalog.html" style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
+                    <span style="margin-right: 0.5em;">🔍</span>View Catalog
+                </a>
+            </li>
+            <li>
+                <a href="cart.html" style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
+                    <span style="margin-right: 0.5em;">🛒</span>Cart
+                </a>
+            </li>
+            <li>
+                <a href="profile.html" style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
+                    <span style="margin-right: 0.5em;">👤</span>Profile
+                </a>
+            </li>
+        </div>
+    </ul>
+</nav>
+    <div class="container">
+        <h1 style="display:flex; justify-content:space-between; align-items:center;">
+            Keranjang Belanja
+            <span style="font-size:0.5em; background:#f2f2f2; padding:0.5em 1.2em; border-radius:6px; color:#393807;">
+                Total Produk: <span id="totalProdukHeader">Rp 650.000</span>
+            </span>
+        </h1>
+        <!-- Tabel cart dinamis -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Produk</th>
+                    <th>Harga</th>
+                    <th style="text-align:center;">Jumlah</th>
+                    <th>Subtotal</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="cartBody">
+                <!-- Diisi oleh JS -->
+            </tbody>
+        </table>
+
+        <!-- Section Metode Pengiriman -->
+        <div style="margin-top:2em; background:#f8f8e8; padding:1.5em; border-radius:8px;">
+            <h3>Metode Pengiriman</h3>
+            <label style="display:block; margin-bottom:0.7em;">
+                <input type="radio" name="shipping" value="delivery" checked onchange="updateShipping()"> Delivery (Biaya pengiriman Rp 25.000)
+            </label>
+            <label style="display:block; margin-bottom:0.7em;">
+                <input type="radio" name="shipping" value="pickup" onchange="updateShipping()"> Pick Up (Tanpa biaya pengiriman)
+            </label>
+            <div id="pickupOptions" style="display:none; margin-top:1em;">
+                <label>
+                    <input type="radio" name="pickupPlace" value="Dekora Store 1" checked> Dekora Store 1 (Jl. Mawar No. 1)
+                </label><br>
+                <label>
+                    <input type="radio" name="pickupPlace" value="Dekora Store 2"> Dekora Store 2 (Jl. Melati No. 2)
+                </label>
+            </div>
+        </div>
+
+        <!-- Section Total Harga -->
+        <div style="margin-top:2em; background:#f2f2f2; padding:1.5em; border-radius:8px;">
+            <h3>Ringkasan Pembayaran</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.7em;">
+                <span>Total Produk</span>
+                <span id="totalProduk">Rp 650.000</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.7em;">
+                <span>Biaya Pengiriman</span>
+                <span id="biayaKirim">Rp 25.000</span>
+            </div>
+            <hr>
+            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.1em;">
+                <span>Total Pembayaran</span>
+                <span id="totalSemua">Rp 675.000</span>
+            </div>
+        </div>
+        <button class="checkout-btn" onclick="checkout()">Checkout</button>
+    </div>
+    <script>
+        // Data produk cart dinamis
+        let cart = [
+            { nama: "Produk A", harga: 150000, jumlah: 1 },
+            { nama: "Produk C", harga: 250000, jumlah: 2 }
+        ];
+        const biayaDelivery = 25000;
+
+        function renderCart() {
+            const tbody = document.getElementById('cartBody');
+            tbody.innerHTML = '';
+            let totalProduk = 0;
+            cart.forEach((item, idx) => {
+                const subtotal = item.harga * item.jumlah;
+                totalProduk += subtotal;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.nama}</td>
+                        <td>Rp ${item.harga.toLocaleString('id-ID')}</td>
+                        <td style="text-align:center;">
+                            <button onclick="changeQty(${idx}, -1)" style="padding:0 6px; margin-right:2px; font-size:1em; border:1px solid #ccc; background:#f2f2f2; color:#393807; border-radius:3px; cursor:pointer;">-</button>
+                            <span id="qty-${idx}" style="display:inline-block; min-width:22px; text-align:center;">${item.jumlah}</span>
+                            <button onclick="changeQty(${idx}, 1)" style="padding:0 6px; margin-left:2px; font-size:1em; border:1px solid #ccc; background:#f2f2f2; color:#393807; border-radius:3px; cursor:pointer;">+</button>
+                        </td>
+                        <td>Rp ${(subtotal).toLocaleString('id-ID')}</td>
+                        <td>
+                            <button onclick="deleteProduct(${idx})" style="background:#c00; color:#fff; border:none; border-radius:4px; padding:4px 10px; cursor:pointer;">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('totalProduk').innerText = "Rp " + totalProduk.toLocaleString('id-ID');
+            document.getElementById('totalProdukHeader').innerText = "Rp " + totalProduk.toLocaleString('id-ID');
+            updateShipping();
+        }
+
+        function changeQty(idx, delta) {
+            if (cart[idx].jumlah + delta < 1) return;
+            cart[idx].jumlah += delta;
+            renderCart();
+        }
+
+        function deleteProduct(idx) {
+            cart.splice(idx, 1);
+            renderCart();
+        }
+
+        function updateShipping() {
+            let totalProduk = cart.reduce((sum, item) => sum + item.harga * item.jumlah, 0);
+            const delivery = document.querySelector('input[name="shipping"][value="delivery"]').checked;
+            const biayaKirim = delivery ? biayaDelivery : 0;
+            document.getElementById('biayaKirim').innerText = biayaKirim === 0 ? "Rp 0" : "Rp " + biayaKirim.toLocaleString('id-ID');
+            document.getElementById('totalSemua').innerText = "Rp " + (totalProduk + biayaKirim).toLocaleString('id-ID');
+            document.getElementById('totalProduk').innerText = "Rp " + totalProduk.toLocaleString('id-ID');
+            document.getElementById('totalProdukHeader').innerText = "Rp " + totalProduk.toLocaleString('id-ID');
+            // Tampilkan opsi pick up jika dipilih
+            document.getElementById('pickupOptions').style.display = delivery ? "none" : "block";
+        }
+
+        // Fungsi checkout untuk redirect ke halaman sukses
+        function checkout() {
+            // Simulasi proses pembayaran, bisa tambahkan validasi jika diperlukan
+            window.location.href = "success.html";
+        }
+
+        // Inisialisasi saat halaman dibuka
+        renderCart();
+
+        // Update shipping jika metode berubah
+        document.querySelectorAll('input[name="shipping"]').forEach(el => {
+            el.addEventListener('change', updateShipping);
+        });
+    </script>
+    <footer>
+        <p>&copy; 2023 Tugas Besar. All rights reserved.</p>
+    </footer>
+</body>
+</html>

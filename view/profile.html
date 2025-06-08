@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEKORA: Profile</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; }
+        .container { max-width: 400px; margin: 3em auto; background: #fff; padding: 2em 2.5em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);}
+        h2 { text-align: center; margin-bottom: 1.5em; }
+        label { display: block; margin-bottom: 0.5em; font-weight: bold; }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%; padding: 0.7em; margin-bottom: 1.2em; border: 1px solid #ccc; border-radius: 4px;
+        }
+        button {
+            width: 100%; background: #393807; color: #fff; border: none; padding: 0.8em; border-radius: 4px; font-size: 1em; cursor: pointer;
+        }
+        button:hover { background: #8b8912; }
+        .success-msg { color: #197d00; margin-bottom: 1em; text-align: center; }
+        .error-msg { color: #c00; margin-bottom: 1em; text-align: center; }
+        .logout-btn { background: #c00; margin-top: 1em; }
+        .logout-btn:hover { background: #a00; }
+        nav {
+            background: #878644;
+            padding: 1em 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1000;
+        }
+        nav ul {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2em;
+            list-style: none;
+        }
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            padding: 0.5em 1.2em;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+        }
+        nav a:hover {
+            background: #393807;
+            color: #878644;
+        }
+        nav img {
+            height: 32px;
+            margin-right: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul style="display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; padding: 0 2em;">
+            <!-- Logo di kiri -->
+            <li style="margin: 0;">
+                <a href="Homepage.html" style="display: flex; align-items: center;">
+                    <img src="dekora.png" alt="Dekora Logo" style="height:32px; margin-right: 0.5em;">
+                </a>
+            </li>
+            <!-- Menu di kanan -->
+            <div style="display: flex; gap: 1.5em; align-items: center;">
+                <li>
+                    <a href="catalog.html" style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
+                        <span style="margin-right: 0.5em;">🔍</span>View Catalog
+                    </a>
+                </li>
+                <li>
+                    <a href="cart.html" style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
+                        <span style="margin-right: 0.5em;">🛒</span>Cart
+                    </a>
+                </li>
+                <li>
+                    <a href="profile.html" style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
+                        <span style="margin-right: 0.5em;">👤</span>Profile
+                    </a>
+                </li>
+            </div>
+        </ul>
+    </nav>
+    <div class="container">
+        <h2>Profil Saya</h2>
+        <div class="success-msg" id="profileSuccess"></div>
+        <div class="error-msg" id="profileError"></div>
+        <form id="profileForm" autocomplete="off">
+            <label for="firstName">Nama Depan</label>
+            <input type="text" id="firstName" required>
+            <label for="lastName">Nama Belakang</label>
+            <input type="text" id="lastName" required>
+            <label for="address">Alamat Lengkap</label>
+            <input type="text" id="address" required>
+            <label for="postal">Kode Pos</label>
+            <input type="text" id="postal" required pattern="[0-9]{5}">
+            <label for="email">Email</label>
+            <input type="email" id="email" required>
+            <label for="currentPassword">Password Lama</label>
+            <input type="password" id="currentPassword" required>
+            <label for="newPassword">Password Baru</label>
+            <input type="password" id="newPassword">
+            <label for="confirmNewPassword">Konfirmasi Password Baru</label>
+            <input type="password" id="confirmNewPassword">
+            <label style="display: flex; align-items: center; margin-bottom: 1em;">
+                <input type="checkbox" id="confirmChangePassword" style="margin-right: 0.5em;">
+                Saya yakin ingin mengganti password
+            </label>
+            <button type="submit">Simpan Perubahan</button>
+        </form>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+    <script>
+        // Cek login
+        if(!localStorage.getItem('isDekoraLoggedIn')) {
+            window.location.href = "login.html";
+        }
+
+        // Load data user
+        function getUser() {
+            return JSON.parse(localStorage.getItem('userDekora') || 'null');
+        }
+        function setUser(user) {
+            localStorage.setItem('userDekora', JSON.stringify(user));
+        }
+
+        const user = getUser();
+        if(user) {
+            document.getElementById('firstName').value = user.firstName || '';
+            document.getElementById('lastName').value = user.lastName || '';
+            document.getElementById('address').value = user.address || '';
+            document.getElementById('postal').value = user.postal || '';
+            document.getElementById('email').value = user.email || '';
+        }
+
+        document.getElementById('profileForm').onsubmit = function(e) {
+            e.preventDefault();
+            const updatedUser = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                address: document.getElementById('address').value.trim(),
+                postal: document.getElementById('postal').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                password: user.password // default, will update if new password is set
+            };
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            const confirmChangePassword = document.getElementById('confirmChangePassword').checked;
+
+            // Validasi semua kolom wajib
+            if(!updatedUser.firstName || !updatedUser.lastName || !updatedUser.address || !updatedUser.postal || !updatedUser.email || !currentPassword) {
+                document.getElementById('profileError').innerText = "Semua kolom harus diisi!";
+                document.getElementById('profileSuccess').innerText = "";
+                return;
+            }
+            // Validasi password lama
+            if(currentPassword !== user.password) {
+                document.getElementById('profileError').innerText = "Password lama salah!";
+                document.getElementById('profileSuccess').innerText = "";
+                return;
+            }
+            // Jika ingin ganti password baru
+            if(newPassword || confirmNewPassword) {
+                if(newPassword.length < 1 || confirmNewPassword.length < 1) {
+                    document.getElementById('profileError').innerText = "Isi password baru dan konfirmasi password baru!";
+                    document.getElementById('profileSuccess').innerText = "";
+                    return;
+                }
+                if(newPassword !== confirmNewPassword) {
+                    document.getElementById('profileError').innerText = "Password baru dan konfirmasi tidak sama!";
+                    document.getElementById('profileSuccess').innerText = "";
+                    return;
+                }
+                if(!confirmChangePassword) {
+                    document.getElementById('profileError').innerText = "Centang kotak konfirmasi untuk mengganti password!";
+                    document.getElementById('profileSuccess').innerText = "";
+                    return;
+                }
+                updatedUser.password = newPassword;
+            }
+            setUser(updatedUser);
+            document.getElementById('profileSuccess').innerText = "Profil berhasil diperbarui!";
+            document.getElementById('profileError').innerText = "";
+            // Kosongkan field password
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+            document.getElementById('confirmChangePassword').checked = false;
+        };
+
+        function logout() {
+            localStorage.removeItem('isDekoraLoggedIn');
+            // Hapus cache history agar tidak bisa kembali ke halaman sebelumnya
+            window.location.replace("login.html");
+        }
+
+        // Cegah akses halaman setelah logout dengan tombol back
+        window.addEventListener('pageshow', function(event) {
+            if (!localStorage.getItem('isDekoraLoggedIn')) {
+                window.location.replace("login.html");
+            }
+        });
+    </script>
+</body>
+</html>
