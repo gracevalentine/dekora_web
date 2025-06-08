@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, session, flash
+
 from model.User import User
 from controller.db_config import get_db_connection
 
@@ -125,3 +126,24 @@ def delete_user(user_id):
     if deleted:
         return jsonify({"message": "User deleted"}), 200
     return jsonify({"message": "User not found"}), 404
+
+@user_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM users WHERE email = %s AND password = %s', (email, password))
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if user:
+            session['logged_in'] = True
+            session['user_id'] = user['user_id']
+            session['user_name'] = user['first_name']
+            return redirect(url_for('index'))
+        else:
+            error = 'Email atau password salah'
+            return render_template('login.html', error=error)
+    return render_template('login.html')

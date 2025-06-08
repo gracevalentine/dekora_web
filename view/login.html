@@ -28,121 +28,35 @@
         .error-msg { color: #c00; margin-bottom: 1em; text-align: center; }
     </style>
 </head>
+<!-- ...existing style... -->
 <body>
     <div class="login-container" id="loginBox">
         <h2>Login ke DEKORA</h2>
-        <div class="error-msg" id="loginError"></div>
-        <form id="loginForm" autocomplete="off">
+        {% if error %}
+            <div class="error-msg">{{ error }}</div>
+        {% endif %}
+        <form id="loginForm" method="POST" action="{{ url_for('user.login') }}" autocomplete="off">
             <label for="loginEmail">Email</label>
-            <input type="email" id="loginEmail" required>
+            <input type="email" id="loginEmail" name="email" required>
             <label for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" required>
+            <input type="password" id="loginPassword" name="password" required>
             <button type="submit">Login</button>
         </form>
         <div class="switch-link">
             Belum punya akun? <a onclick="showSignUp()">Sign Up</a>
         </div>
     </div>
-    <div class="login-container" id="signupBox" style="display:none;">
-        <h2>Sign Up DEKORA</h2>
-        <div class="error-msg" id="signupError"></div>
-        <form id="signupForm" autocomplete="off">
-            <label for="firstName">Nama Depan</label>
-            <input type="text" id="firstName" required>
-            <label for="lastName">Nama Belakang</label>
-            <input type="text" id="lastName" required>
-            <label for="address">Alamat Lengkap</label>
-            <input type="text" id="address" required>
-            <label for="postal">Kode Pos</label>
-            <input type="text" id="postal" required pattern="[0-9]{5}">
-            <label for="signupEmail">Email</label>
-            <input type="email" id="signupEmail" required>
-            <label for="signupPassword">Password</label>
-            <input type="password" id="signupPassword" required>
-            <label for="signupPasswordConfirm">Konfirmasi Password</label>
-            <input type="password" id="signupPasswordConfirm" required>
-            <button type="submit">Sign Up</button>
-        </form>
-        <div class="switch-link">
-            Sudah punya akun? <a onclick="showLogin()">Login</a>
-        </div>
-    </div>
+    <!-- signupBox bisa diatur nanti jika endpoint signup sudah ada -->
+    <!-- ... -->
     <script>
-        // Simulasi penyimpanan user (localStorage)
-        function getUser() {
-            return JSON.parse(localStorage.getItem('userDekora') || 'null');
-        }
-        function setUser(user) {
-            localStorage.setItem('userDekora', JSON.stringify(user));
-        }
-        function isLoggedIn() {
-            return !!localStorage.getItem('isDekoraLoggedIn');
-        }
-        function setLoggedIn(val) {
-            if(val) localStorage.setItem('isDekoraLoggedIn', '1');
-            else localStorage.removeItem('isDekoraLoggedIn');
-        }
-
-        // Switch form
+        // Hapus/disable semua JS localStorage login/signup
         function showSignUp() {
             document.getElementById('loginBox').style.display = 'none';
             document.getElementById('signupBox').style.display = 'block';
-            document.getElementById('loginError').innerText = '';
-            document.getElementById('signupError').innerText = '';
         }
         function showLogin() {
             document.getElementById('signupBox').style.display = 'none';
             document.getElementById('loginBox').style.display = 'block';
-            document.getElementById('loginError').innerText = '';
-            document.getElementById('signupError').innerText = '';
-        }
-
-        // Login
-        document.getElementById('loginForm').onsubmit = function(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPassword').value;
-            const user = getUser();
-            if(user && user.email === email && user.password === pass) {
-                setLoggedIn(true);
-                window.location.href = "Homepage.html";
-            } else {
-                document.getElementById('loginError').innerText = "Email atau password salah!";
-            }
-        };
-
-        // Sign Up
-        document.getElementById('signupForm').onsubmit = function(e) {
-            e.preventDefault();
-            const user = {
-                firstName: document.getElementById('firstName').value.trim(),
-                lastName: document.getElementById('lastName').value.trim(),
-                address: document.getElementById('address').value.trim(),
-                postal: document.getElementById('postal').value.trim(),
-                email: document.getElementById('signupEmail').value.trim(),
-                password: document.getElementById('signupPassword').value
-            };
-            const passwordConfirm = document.getElementById('signupPasswordConfirm').value;
-            if(!user.firstName || !user.lastName || !user.address || !user.postal || !user.email || !user.password || !passwordConfirm) {
-                document.getElementById('signupError').innerText = "Semua kolom harus diisi!";
-                return;
-            }
-            if(user.password !== passwordConfirm) {
-                document.getElementById('signupError').innerText = "Password dan konfirmasi password tidak sama!";
-                return;
-            }
-            setUser(user);
-            setLoggedIn(true);
-            window.location.href = "Homepage.html";
-        };
-
-        // Jika sudah login, langsung redirect ke homepage
-        if(isLoggedIn()) {
-            window.location.href = "Homepage.html";
-        }
-
-        if(!localStorage.getItem('isDekoraLoggedIn')) {
-            window.location.href = "login.html";
         }
     </script>
 </body>
