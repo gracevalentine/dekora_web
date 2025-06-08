@@ -142,9 +142,10 @@ def login():
             session['logged_in'] = True
             session['user_id'] = user['user_id']
             session['user_name'] = user['first_name']
+            flash('Login berhasil! Selamat datang, {}.'.format(user['first_name']), 'success')
             return redirect(url_for('index'))
         else:
-            error = 'Email atau password salah'
+            error = 'Gagal login, email atau password salah'
             return render_template('login.html', error=error)
     return render_template('login.html')
 

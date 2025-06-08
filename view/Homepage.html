@@ -17,9 +17,18 @@
         .topup-btn { background: #393807; color: #fff; border: none; padding: 0.7em 2em; border-radius: 4px; font-size: 1em; cursor: pointer; }
         .topup-btn:hover { background: #8b8912; }
         footer { text-align: center; margin-top: 3em; color: #888; }
+        .flash.success { background-color: rgb(62, 202, 57); }
+        .flash.danger { color: red; }
     </style>
 </head>
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <nav>
 <ul style="display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; padding: 0 2em;">
     <!-- Logo di kiri -->
