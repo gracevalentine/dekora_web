@@ -182,76 +182,32 @@
     </nav>
     <div class="container">
         <h1>Catalog Produk</h1>
-        <form class="search-bar" id="searchForm" onsubmit="return false;">
-            <input type="text" id="searchInput" placeholder="Cari produk...">
+        <form class="search-bar" id="searchForm" method="get" action="{{ url_for('product.catalog') }}">
+            <input type="text" id="searchInput" name="q" placeholder="Cari produk..." value="{{ keyword|default('') }}">
             <button type="submit">🔍 Cari</button>
         </form>
         <div class="produk-list" id="produkList">
-            <!-- Produk akan ditampilkan di sini -->
+            {% if products %}
+            {% for p in products %}
+            <div class="produk-item">
+                <img src="{{ p.image_url }}" alt="{{ p.name }}">
+                <h3>{{ p.name }}</h3>
+                <p>Rp {{ "{:,.0f}".format(p.price) }}</p>
+                <p style="font-size:0.9em; color:#888;">{{ p.category }}</p>
+                <a href="{{ url_for('product.product_detail', product_id=p.product_id) }}">
+                    <button style="margin-bottom:0.5em;">Lihat Detail</button>
+                </a>
+                <button>Tambah ke Cart</button>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color:#888; width:100%; text-align:center;">Produk tidak ditemukan.</p>
+            {% endif %}
         </div>
     </div>
     <footer>
         <p>&copy; 2023 Tugas Besar. All rights reserved.</p>
     </footer>
-    <script>
-        // Data produk statis
-        const produk = [
-            {
-                nama: "Produk A",
-                harga: "Rp 150.000",
-                img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=200&q=80"
-            },
-            {
-                nama: "Produk B",
-                harga: "Rp 200.000",
-                img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=200&q=80"
-            },
-            {
-                nama: "Produk C",
-                harga: "Rp 250.000",
-                img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=200&q=80"
-            },
-            {
-                nama: "Produk D",
-                harga: "Rp 180.000",
-                img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=200&q=80"
-            },
-            {
-                nama: "Produk E",
-                harga: "Rp 300.000",
-                img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=200&q=80"
-            }
-        ];
-
-        function tampilkanProduk(list) {
-            const produkList = document.getElementById('produkList');
-            produkList.innerHTML = '';
-            if (list.length === 0) {
-                produkList.innerHTML = '<p style="color:#888; width:100%; text-align:center;">Produk tidak ditemukan.</p>';
-                return;
-            }
-            list.forEach(p => {
-                produkList.innerHTML += `
-                    <div class="produk-item">
-                        <img src="${p.img}" alt="${p.nama}">
-                        <h3>${p.nama}</h3>
-                        <p>${p.harga}</p>
-                        <button>Tambah ke Cart</button>
-                    </div>
-                `;
-            });
-        }
-
-        // Tampilkan semua produk saat halaman dibuka
-        tampilkanProduk(produk);
-
-        // Fitur search
-        document.getElementById('searchForm').addEventListener('submit', function () {
-            const keyword = document.getElementById('searchInput').value.toLowerCase();
-            const hasil = produk.filter(p => p.nama.toLowerCase().includes(keyword));
-            tampilkanProduk(hasil);
-        });
-    </script>
 </body>
 
 </html>

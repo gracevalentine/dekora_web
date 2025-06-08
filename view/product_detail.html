@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.name }} - Detail Produk</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 3em auto;
+            background: #fff;
+            padding: 2em 2.5em;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .product-image {
+            width: 100%;
+            max-height: 320px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1.5em;
+            background: #eee;
+        }
+        h2 {
+            margin-top: 0.5em;
+            margin-bottom: 0.3em;
+        }
+        .category {
+            color: #878644;
+            font-size: 1em;
+            margin-bottom: 0.7em;
+        }
+        .price {
+            color: #393807;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 0.7em;
+        }
+        .stock {
+            color: #888;
+            font-size: 1em;
+            margin-bottom: 1em;
+        }
+        .desc {
+            margin-bottom: 1.5em;
+            color: #444;
+        }
+        .btn-back {
+            display: inline-block;
+            background: #393807;
+            color: #fff;
+            padding: 0.6em 1.5em;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1em;
+            transition: background 0.2s;
+        }
+        .btn-back:hover {
+            background: #8b8912;
+            color: #fff;
+        }
+        .btn-cart {
+            display: inline-block;
+            background: #8b8912;
+            color: #fff;
+            padding: 0.6em 1.5em;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1em;
+            margin-left: 1em;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-cart:hover {
+            background: #393807;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+        <h2>{{ product.name }}</h2>
+        <div class="category">{{ product.category }}</div>
+        <div class="price">Rp {{ "{:,.0f}".format(product.price) }}</div>
+        <div class="stock">Stok: {{ product.stock_quantity }}</div>
+        <div class="desc">{{ product.description }}</div>
+        <a href="{{ url_for('product.catalog') }}" class="btn-back">← Kembali ke Katalog</a>
+        <button class="btn-cart">Tambah ke Cart</button>
+    </div>
+</body>
+</html>
