@@ -2,8 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEKORA: Login</title>
+    <title>Sign Up Dekora</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; }
         .login-container {
@@ -28,36 +27,30 @@
         .error-msg { color: #c00; margin-bottom: 1em; text-align: center; }
     </style>
 </head>
-
 <body>
-    <div class="login-container" id="loginBox">
-        <h2>Login ke DEKORA</h2>
+    <div class="login-container">
+        <h2>Sign Up ke DEKORA</h2>
         {% if error %}
             <div class="error-msg">{{ error }}</div>
         {% endif %}
-        <form id="loginForm" method="POST" action="{{ url_for('user.login') }}" autocomplete="off">
-            <label for="loginEmail">Email</label>
-            <input type="email" id="loginEmail" name="email" required>
-            <label for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" name="password" required>
-            <button type="submit">Login</button>
+        <form method="POST" action="{{ url_for('user.signup') }}">
+            <label for="first_name">Nama Depan</label>
+            <input type="text" id="first_name" name="first_name" required>
+            <label for="last_name">Nama Belakang</label>
+            <input type="text" id="last_name" name="last_name" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <label for="address">Alamat</label>
+            <input type="text" id="address" name="address">
+            <label for="postal_code">Kode Pos</label>
+            <input type="text" id="postal_code" name="postal_code">
+            <button type="submit">Sign Up</button>
         </form>
         <div class="switch-link">
-            Belum punya akun? <a href="{{ url_for('user.signup') }}">Sign Up</a>
+            Sudah punya akun? <a href="{{ url_for('user.login') }}">Login</a>
         </div>
     </div>
-    <!-- signupBox bisa diatur nanti jika endpoint signup sudah ada -->
-    <!-- ... -->
-    <script>
-        // Hapus/disable semua JS localStorage login/signup
-        function showSignUp() {
-            document.getElementById('loginBox').style.display = 'none';
-            document.getElementById('signupBox').style.display = 'block';
-        }
-        function showLogin() {
-            document.getElementById('signupBox').style.display = 'none';
-            document.getElementById('loginBox').style.display = 'block';
-        }
-    </script>
 </body>
 </html>

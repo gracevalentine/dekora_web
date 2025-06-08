@@ -147,3 +147,39 @@ def login():
             error = 'Email atau password salah'
             return render_template('login.html', error=error)
     return render_template('login.html')
+
+@user_bp.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('user.login'))
+
+@user_bp.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        email = request.form['email']
+        password = request.form['password']
+        address = request.form.get('address', '')
+        postal_code = request.form.get('postal_code', '')
+        wallet = 0  # atau bisa None
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        # Cek apakah email sudah terdaftar
+        cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
+        if cursor.fetchone():
+            cursor.close()
+            conn.close()
+            error = 'Email sudah terdaftar'
+            return render_template('signup.html', error=error)
+        # Insert user baru
+        cursor.execute('''
+            INSERT INTO users (first_name, last_name, email, password, address, postal_code, wallet)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        ''', (first_name, last_name, email, password, address, postal_code, wallet))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return redirect(url_for('user.login'))
+    return render_template('signup.html')
