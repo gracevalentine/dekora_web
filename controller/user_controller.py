@@ -183,3 +183,26 @@ def signup():
         conn.close()
         return redirect(url_for('user.login'))
     return render_template('signup.html')
+
+@user_bp.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if not session.get('logged_in'):
+        return redirect(url_for('user.login'))
+
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('SELECT * FROM users WHERE user_id = %s', (user_id,))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if not user:
+        return redirect(url_for('user.logout'))
+
+    # Jika POST, proses update profile di sini (opsional)
+    if request.method == 'POST':
+        # ...proses update profile...
+        pass
+
+    return render_template('profile.html', user=user)
