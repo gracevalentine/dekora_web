@@ -207,3 +207,20 @@ def profile():
         pass
 
     return render_template('profile.html', user=user)
+
+@user_bp.route('/api/wallet', methods=['GET'])
+def get_wallet():
+    if not session.get('logged_in'):
+        return jsonify({"success": False, "message": "Unauthorized"}), 401
+
+    user_id = session.get('user_id')
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute('SELECT wallet FROM users WHERE user_id = %s', (user_id,))
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    if row:
+        return jsonify({"success": True, "wallet": row['wallet']}), 200
+    return jsonify({"success": False, "wallet": 0}), 404

@@ -70,8 +70,10 @@
         <section class="dekorapay-section">
             <h2>DekoraPay</h2>
             <p>Saldo Rekening Anda:</p>
-            <div class="saldo" id="saldo">Rp 1.000.000</div>
-            <button class="topup-btn" onclick="topUp()">Top Up</button>
+            <div class="saldo" id="saldo">Rp 0</div>
+            <a href="{{ url_for('topup.topup_page') }}">
+    <button class="topup-btn" type="button">Top Up</button>
+</a>
         </section>
 
             <!-- Section Produk -->
@@ -116,16 +118,21 @@
         <p>&copy; 2023 Tugas Besar. All rights reserved.</p>
     </footer>
     <script>
-        function topUp() {
-            let saldoElem = document.getElementById('saldo');
-            let saldo = parseInt(saldoElem.innerText.replace(/[^\d]/g, ''));
-            let tambah = prompt("Masukkan jumlah top up (Rp):", "100000");
-            if (tambah && !isNaN(tambah)) {
-                saldo += parseInt(tambah);
-                saldoElem.innerText = "Rp " + saldo.toLocaleString('id-ID');
-                alert("Top up berhasil!");
+function formatRupiah(angka) {
+    return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function updateSaldo() {
+    fetch("{{ url_for('user.get_wallet') }}")
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                document.getElementById('saldo').textContent = "Rp " + data.wallet.toLocaleString('id-ID');
             }
-        }
+        });
+}
+
+updateSaldo();
     </script>
 </body>
 </html>
