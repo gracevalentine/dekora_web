@@ -4,7 +4,9 @@ from model.Product import Product
 from model.Cart import Cart
 
 class Order:
-    def __init__(self, user_id=User, product_id: Product = None, quantity=1, total_amount=0.0, create_at: datetime = None, cart_id: Cart = None, order_id=0):
+    def __init__(self, user_id=User, product_id: Product = None, quantity=1, total_amount=0.0, 
+                 create_at: datetime = None, cart_id: Cart = None, order_id=0, 
+                 external_id=None, status="UNPAID", paid_amount=0):
         self._user_id = user_id
         self._product_id = product_id
         self._quantity = quantity
@@ -12,6 +14,9 @@ class Order:
         self._total_amount = total_amount
         self._create_at = create_at if create_at else datetime.now()
         self._cart_id = cart_id
+        self._external_id = external_id
+        self._status = status
+        self._paid_amount = paid_amount
     
     @property
     def user_id(self):
@@ -78,5 +83,32 @@ class Order:
         if not isinstance(value, Cart):
             raise ValueError("Cart ID must be a Cart object")
         self._cart_id = value
+
+    @property
+    def external_id(self):
+        return self._external_id
     
+    @external_id.setter
+    def external_id(self, value: str):
+        self._external_id = value
+
+    @property
+    def status(self):
+        return self._status
     
+    @status.setter
+    def status(self, value: str):
+        valid_statuses = ["UNPAID", "PAID", "EXPIRED", "FAILED"]
+        if value not in valid_statuses:
+            raise ValueError(f"Status must be one of: {', '.join(valid_statuses)}")
+        self._status = value
+
+    @property
+    def paid_amount(self):
+        return self._paid_amount
+    
+    @paid_amount.setter
+    def paid_amount(self, value: float):
+        if value < 0:
+            raise ValueError("Paid amount cannot be negative")
+        self._paid_amount = value

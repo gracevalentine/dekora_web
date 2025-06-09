@@ -3,6 +3,8 @@ from controller.user_controller import user_bp
 from controller.product_controller import product_bp
 from controller.cart_controller import cart_bp
 from controller.topUp_controller import topup_bp
+from controller.xendit_controller import xendit_bp
+
 
 
 
@@ -12,6 +14,7 @@ app.register_blueprint(user_bp)
 app.register_blueprint(product_bp)
 app.register_blueprint(cart_bp)
 app.register_blueprint(topup_bp)
+app.register_blueprint(xendit_bp)
 
 @app.route('/')
 def index():

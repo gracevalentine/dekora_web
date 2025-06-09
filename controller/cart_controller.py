@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, jsonify
 from controller.db_config import get_db_connection
+# controller/cart_controller.py
+import requests, base64, time, uuid
+
 
 cart_bp = Blueprint('cart', __name__)
 
@@ -77,3 +80,81 @@ def delete_cart():
     cursor.close()
     conn.close()
     return jsonify({'success': True})
+
+
+
+@cart_bp.route('/checkout', methods=['POST'])
+@cart_bp.route('/checkout', methods=['POST'])
+def checkout():
+    if not session.get('logged_in'):
+        return redirect(url_for('user.login'))
+    
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Ambil semua item cart
+    cursor.execute('''
+        SELECT c.cart_id, c.quantity, p.product_id, p.name, p.price,
+               (c.quantity * p.price) as subtotal
+        FROM cart c 
+        JOIN products p ON c.product_id = p.product_id 
+        WHERE c.user_id = %s
+    ''', (user_id,))
+    cart_items = cursor.fetchall()
+    
+    if not cart_items:
+        cursor.close()
+        conn.close()
+        return jsonify({'success': False, 'message': 'Cart kosong'}), 400
+
+    total = sum(item['subtotal'] for item in cart_items)
+    
+    import requests, base64, time, uuid
+    api_key = 'xnd_development_5v7BqnSusQojGoxOXIJY11K75pt0yVkTeXyuvaPD9R95DYdGZmtZWAFZGsxrgPg'  # Ganti dengan key kamu
+    headers = {
+        'Authorization': 'Basic ' + base64.b64encode((api_key + ':').encode()).decode(),
+        'Content-Type': 'application/json'
+    }
+    external_id = f"order-{user_id}-{int(time.time())}-{uuid.uuid4().hex[:6]}"
+    data = {
+        "external_id": external_id,
+        "amount": total,
+        "payer_email": session.get('email', 'user@email.com'),
+        "description": "Pembayaran Dekora",
+        "success_redirect_url": url_for('cart.cart', _external=True)
+    }
+    response = requests.post(
+        "https://api.xendit.co/v2/invoices",
+        headers=headers,
+        json=data
+    )
+    print("Xendit Response:", response.text)
+    if response.status_code == 200:
+        result = response.json()
+        # Buat satu baris order saja
+        cursor.execute('''
+            INSERT INTO orders 
+            (user_id, total_amount, external_id, status) 
+            VALUES (%s, %s, %s, %s)
+        ''', (
+            user_id,
+            total,
+            external_id,
+            'PENDING'
+        ))
+        # (Opsional) Insert detail produk ke tabel lain, misal order_items/transaction
+        # Kosongkan cart
+        cursor.execute('DELETE FROM cart WHERE user_id = %s', (user_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return redirect(result['invoice_url'])
+    else:
+        cursor.close()
+        conn.close()
+        return jsonify({
+            'success': False, 
+            'message': 'Gagal membuat invoice',
+            'error': response.text
+        }), 400
