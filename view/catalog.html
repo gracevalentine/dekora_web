@@ -1,230 +1,306 @@
 <!DOCTYPE html>
 <html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DEKORA: Catalog</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f7f7f7;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f7f7f7;
+      }
 
-        nav {
-            background: #878644;
-            padding: 1em 0;
-        }
+      nav {
+        background: #878644;
+        padding: 1em 0;
+      }
 
-        nav ul {
-            list-style: none;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 2em;
-        }
+      nav ul {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 2em;
+      }
 
-        nav ul li {
-            margin: 0 1.5em;
-        }
+      nav ul li {
+        margin: 0 1.5em;
+      }
 
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-        }
+      nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+      }
 
-        .nav-btn {
-            background: #393807;
-            color: #fff;
-            padding: 0.5em 1.2em;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
+      .nav-btn {
+        background: #393807;
+        color: #fff;
+        padding: 0.5em 1.2em;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
 
-        .nav-btn span {
-            margin-right: 0.5em;
-        }
+      .nav-btn span {
+        margin-right: 0.5em;
+      }
 
-        .container {
-            max-width: 800px;
-            margin: 2em auto;
-            background: #fff;
-            padding: 2em;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
+      .container {
+        max-width: 800px;
+        margin: 2em auto;
+        background: #fff;
+        padding: 2em;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
 
-        h1 {
-            margin-top: 0;
-        }
+      h1 {
+        margin-top: 0;
+      }
 
-        .search-bar {
-            display: flex;
-            margin-bottom: 2em;
-        }
+      .search-bar {
+        display: flex;
+        margin-bottom: 2em;
+      }
 
-        .search-bar input[type="text"] {
-            flex: 1;
-            padding: 0.7em 1em;
-            border: 1px solid #ccc;
-            border-radius: 4px 0 0 4px;
-            font-size: 1em;
-            outline: none;
-        }
+      .search-bar input[type="text"] {
+        flex: 1;
+        padding: 0.7em 1em;
+        border: 1px solid #ccc;
+        border-radius: 4px 0 0 4px;
+        font-size: 1em;
+        outline: none;
+      }
 
-        .search-bar button {
-            background: #393807;
-            color: #fff;
-            border: none;
-            padding: 0.7em 1.5em;
-            border-radius: 0 4px 4px 0;
-            font-size: 1em;
-            cursor: pointer;
-        }
+      .search-bar button {
+        background: #393807;
+        color: #fff;
+        border: none;
+        padding: 0.7em 1.5em;
+        border-radius: 0 4px 4px 0;
+        font-size: 1em;
+        cursor: pointer;
+      }
 
-        .produk-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5em;
-            justify-content: center;
-        }
+      .produk-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5em;
+        justify-content: center;
+      }
 
-        .produk-item {
-            background: #fafafa;
-            border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-            padding: 1em;
-            width: 180px;
-            text-align: center;
-        }
+      .produk-item {
+        background: #fafafa;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        padding: 1em;
+        width: 180px;
+        text-align: center;
+      }
 
-        .produk-item img {
-            width: 100%;
-            border-radius: 6px;
-        }
+      .produk-item img {
+        width: 100%;
+        border-radius: 6px;
+      }
 
-        .produk-item h3 {
-            font-size: 1.1em;
-            margin: 0.7em 0 0.3em 0;
-        }
+      .produk-item h3 {
+        font-size: 1.1em;
+        margin: 0.7em 0 0.3em 0;
+      }
 
-        .produk-item p {
-            color: #393807;
-            font-weight: bold;
-            margin: 0.3em 0;
-        }
+      .produk-item p {
+        color: #393807;
+        font-weight: bold;
+        margin: 0.3em 0;
+      }
 
-        .produk-item button {
-            background: #393807;
-            color: #fff;
-            border: none;
-            padding: 0.5em 1em;
-            border-radius: 4px;
-            font-size: 1em;
-            cursor: pointer;
-            width: 100%;
-        }
+      .produk-item button {
+        background: #393807;
+        color: #fff;
+        border: none;
+        padding: 0.5em 1em;
+        border-radius: 4px;
+        font-size: 1em;
+        cursor: pointer;
+        width: 100%;
+      }
 
-        .produk-item button:hover {
-            background: #8b8912;
-        }
+      .produk-item button:hover {
+        background: #8b8912;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <nav>
-        <ul
-            style="display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; padding: 0 2em;">
-            <!-- Logo di kiri -->
-            <li style="margin: 0;">
-                <a href="{{ url_for('index') }}" style="display: flex; align-items: center;">
-                    <img src="dekora.png" alt="Dekora Logo" style="height:32px; margin-right: 0.5em;">
-                </a>
-            </li>
-            <!-- Menu di kanan -->
-            <div style="display: flex; gap: 1.5em; align-items: center;">
-                <li>
-                    <a href="{{ url_for('product.catalog') }}"
-                        style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
-                        <span style="margin-right: 0.5em;">🔍</span>View Catalog
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url_for('cart.cart') }}"
-                        style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
-                        <span style="margin-right: 0.5em;">🛒</span>Cart
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url_for('user.profile') }}"
-                        style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
-                        <span style="margin-right: 0.5em;">👤</span>Profile
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url_for('user.logout') }}"
-                        style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
-                        <span style="margin-right: 0.5em;">👤</span>Logout
-                    </a>
-                </li>
-            </div>
-        </ul>
+      <ul
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 0 2em;
+        "
+      >
+        <!-- Logo di kiri -->
+        <li style="margin: 0">
+          <a
+            href="{{ url_for('index') }}"
+            style="display: flex; align-items: center"
+          >
+             <img
+              src="{{ url_for('static', filename='dekora.png') }}"
+              alt="Dekora Logo"
+              style="height: 32px; margin-right: 0.5em"
+            />
+          </a>
+        </li>
+        <!-- Menu di kanan -->
+        <div style="display: flex; gap: 1.5em; align-items: center">
+          <li>
+            <a
+              href="{{ url_for('product.catalog') }}"
+              style="
+                background: #393807;
+                color: #fff;
+                padding: 0.5em 1.2em;
+                border-radius: 4px;
+                text-decoration: none;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+              "
+            >
+              <span style="margin-right: 0.5em">🔍</span>View Catalog
+            </a>
+          </li>
+          <li>
+            <a
+              href="{{ url_for('cart.cart') }}"
+              style="
+                background: #393807;
+                color: #fff;
+                padding: 0.5em 1.2em;
+                border-radius: 4px;
+                text-decoration: none;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+              "
+            >
+              <span style="margin-right: 0.5em">🛒</span>Cart
+            </a>
+          </li>
+          <li>
+            <a
+              href="{{ url_for('user.profile') }}"
+              style="
+                background: #393807;
+                color: #fff;
+                padding: 0.5em 1.2em;
+                border-radius: 4px;
+                text-decoration: none;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+              "
+            >
+              <span style="margin-right: 0.5em">👤</span>Profile
+            </a>
+          </li>
+          <li>
+            <a
+              href="{{ url_for('user.logout') }}"
+              style="
+                background: #393807;
+                color: #fff;
+                padding: 0.5em 1.2em;
+                border-radius: 4px;
+                text-decoration: none;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+              "
+            >
+              <span style="margin-right: 0.5em">👤</span>Logout
+            </a>
+          </li>
+        </div>
+      </ul>
     </nav>
     <div class="container">
-        <h1>Catalog Produk</h1>
-        <form class="search-bar" id="searchForm" method="get" action="{{ url_for('product.catalog') }}">
-            <input type="text" id="searchInput" name="q" placeholder="Cari produk..." value="{{ keyword|default('') }}">
-            <button type="submit">🔍 Cari</button>
-        </form>
-        <div class="produk-list" id="produkList">
-            {% if products %}
-            {% for p in products %}
-            <div class="produk-item">
-                <img src="{{ url_for('static', filename=p.image_url) }}" alt="{{ p.name }}">
-                <h3>{{ p.name }}</h3>
-                <p>Rp {{ "{:,.0f}".format(p.price) }}</p>
-                <p style="font-size:0.9em; color:#888;">{{ p.category }}</p>
-                <a href="{{ url_for('product.product_detail', product_id=p.product_id) }}">
-                    <button style="margin-bottom:0.5em;">Lihat Detail</button>
-                </a>
-                <button class="btn-cart" onclick="addToCart({{ p.product_id }})">Tambah ke Cart</button>
-            </div>
-            {% endfor %}
-            {% else %}
-            <p style="color:#888; width:100%; text-align:center;">Produk tidak ditemukan.</p>
-            {% endif %}
+      <h1>Catalog Produk</h1>
+      <form
+        class="search-bar"
+        id="searchForm"
+        method="get"
+        action="{{ url_for('product.catalog') }}"
+      >
+        <input
+          type="text"
+          id="searchInput"
+          name="q"
+          placeholder="Cari produk..."
+          value="{{ keyword|default('') }}"
+        />
+        <button type="submit">🔍 Cari</button>
+      </form>
+      <div class="produk-list" id="produkList">
+        {% if products %} {% for p in products %}
+        <div class="produk-item">
+          <img
+            src="{{ url_for('static', filename=p.image_url) }}"
+            alt="{{ p.name }}"
+          />
+          <h3>{{ p.name }}</h3>
+          <p>Rp {{ "{:,.0f}".format(p.price) }}</p>
+          <p style="font-size: 0.9em; color: #888">{{ p.category }}</p>
+          <a
+            href="{{ url_for('product.product_detail', product_id=p.product_id) }}"
+          >
+            <button style="margin-bottom: 0.5em">Lihat Detail</button>
+          </a>
+          <button class="btn-cart" onclick="addToCart({{ p.product_id }})">
+            Tambah ke Cart
+          </button>
         </div>
+        {% endfor %} {% else %}
+        <p style="color: #888; width: 100%; text-align: center">
+          Produk tidak ditemukan.
+        </p>
+        {% endif %}
+      </div>
     </div>
     <footer>
-        <p>&copy; 2023 Tugas Besar. All rights reserved.</p>
+      <p>&copy; 2023 Tugas Besar. All rights reserved.</p>
     </footer>
-</body>
-<script>
-function addToCart(productId) {
-    fetch("{{ url_for('cart.add_to_cart') }}", {
+  </body>
+  <script>
+    function addToCart(productId) {
+      fetch("{{ url_for('cart.add_to_cart') }}", {
         method: "POST",
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: "product_id=" + productId + "&quantity=1"
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message);
-    })
-    .catch(() => {
-        alert("Gagal menambah ke cart.");
-    });
-}
-</script>
+        body: "product_id=" + productId + "&quantity=1",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          alert(data.message);
+        })
+        .catch(() => {
+          alert("Gagal menambah ke cart.");
+        });
+    }
+  </script>
 </html>
