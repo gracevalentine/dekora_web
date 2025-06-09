@@ -93,6 +93,8 @@ def checkout():
         return redirect(url_for('user.login'))
     
     user_id = session['user_id']
+    delivery_method = request.form.get('delivery_method', 'pickup')
+    delivery_fee = 25000 if delivery_method == 'delivery' else 0
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
@@ -112,7 +114,8 @@ def checkout():
         return jsonify({'success': False, 'message': 'Cart kosong'}), 400
 
     total = sum(item['subtotal'] for item in cart_items)
-    
+    grand_total = total + delivery_fee
+
     import requests, base64, time, uuid
     api_key = 'xnd_development_5v7BqnSusQojGoxOXIJY11K75pt0yVkTeXyuvaPD9R95DYdGZmtZWAFZGsxrgPg'  # Ganti dengan key kamu
     headers = {
@@ -122,7 +125,7 @@ def checkout():
     external_id = f"order-{user_id}-{int(time.time())}-{uuid.uuid4().hex[:6]}"
     data = {
         "external_id": external_id,
-        "amount": total,
+        "amount": grand_total,
         "payer_email": session.get('email', 'user@email.com'),
         "description": "Pembayaran Dekora",
         "success_redirect_url": url_for('cart.cart', _external=True)

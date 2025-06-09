@@ -154,7 +154,7 @@
             </span>
         </h1>
         <!-- Tabel cart dinamis -->
-        <table>
+          <table>
             <thead>
                 <tr>
                     <th>Produk</th>
@@ -174,18 +174,13 @@
                     </td>
                     <td>Rp {{ "{:,.0f}".format(item.price) }}</td>
                     <td style="text-align:center;">
-                        <button onclick=updateQty({{ item.cart_id }}, {{ item.quantity - 1 }})
-                            style="border:none;background:none;font-size:1.2em;cursor:pointer;">➖</button>
+                        <button onclick=updateQty({{ item.cart_id }}, {{ item.quantity - 1 }}) style="border:none;background:none;font-size:1.2em;cursor:pointer;">➖</button>
                         <span style="margin:0 0.7em;">{{ item.quantity }}</span>
-                        <button onclick=updateQty({{ item.cart_id }}, {{ item.quantity + 1 }})
-                            style="border:none;background:none;font-size:1.2em;cursor:pointer;">➕</button>
+                        <button onclick=updateQty({{ item.cart_id }}, {{ item.quantity + 1 }}) style="border:none;background:none;font-size:1.2em;cursor:pointer;">➕</button>
                     </td>
                     <td>Rp {{ "{:,.0f}".format(item.price * item.quantity) }}</td>
                     <td>
-                        <button onclick=deleteCart({{ item.cart_id }})
-                            style="border:none;background:none;font-size:1.2em;cursor:pointer;" title="Hapus">
-                            🗑
-                        </button>
+                        <button onclick=deleteCart({{ item.cart_id }}) style="border:none;background:none;font-size:1.2em;cursor:pointer;" title="Hapus">🗑</button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -197,53 +192,53 @@
             </tbody>
         </table>
 
-        <!-- Section Metode Pengiriman -->
-        <div style="margin-top:2em; background:#f8f8e8; padding:1.5em; border-radius:8px;">
-            <h3>Metode Pengiriman</h3>
-            <label style="display:block; margin-bottom:0.7em;">
-                <input type="radio" name="shipping" value="delivery" checked onchange="updateShipping()"> Delivery
-                (Biaya pengiriman Rp 25.000)
-            </label>
-            <label style="display:block; margin-bottom:0.7em;">
-                <input type="radio" name="shipping" value="pickup" onchange="updateShipping()"> Pick Up (Tanpa biaya
-                pengiriman)
-            </label>
-            <div id="pickupOptions" style="display:none; margin-top:1em;">
-                <label>
-                    <input type="radio" name="pickupPlace" value="Dekora Store 1" checked> Dekora Store 1 (Jl. Mawar No.
-                    1)
-                </label><br>
-                <label>
-                    <input type="radio" name="pickupPlace" value="Dekora Store 2"> Dekora Store 2 (Jl. Melati No. 2)
+        <!-- Section Metode Pengiriman & Checkout -->
+        <form id="checkout-form" method="POST" action="{{ url_for('cart.checkout') }}">
+            <div style="margin-top:2em; background:#f8f8e8; padding:1.5em; border-radius:8px;">
+                <h3>Metode Pengiriman</h3>
+                <label style="display:block; margin-bottom:0.7em;">
+                    <input type="radio" name="delivery_method" value="pickup" checked onchange="updateRingkasan()"> Pickup (Gratis)
+                </label>
+                <label style="display:block; margin-bottom:0.7em;">
+                    <input type="radio" name="delivery_method" value="delivery" onchange="updateRingkasan()"> Delivery (+Rp25.000)
                 </label>
             </div>
-        </div>
 
-        <!-- Section Total Harga -->
-        <div style="margin-top:2em; background:#f2f2f2; padding:1.5em; border-radius:8px;">
-            <h3>Ringkasan Pembayaran</h3>
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.7em;">
-                <span>Total Produk</span>
-                <span id="totalProduk">Rp {{ "{:,.0f}".format(total_produk) }}</span>
+            <!-- Section Total Harga -->
+            <div style="margin-top:2em; background:#f2f2f2; padding:1.5em; border-radius:8px;">
+                <h3>Ringkasan Pembayaran</h3>
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.7em;">
+                    <span>Total Produk</span>
+                    <span id="totalProduk">Rp {{ "{:,.0f}".format(total_produk) }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.7em;">
+                    <span>Biaya Pengiriman</span>
+                    <span id="biayaKirim">Rp 0</span>
+                </div>
+                <hr>
+                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.1em;">
+                    <span>Total Pembayaran</span>
+                    <span id="totalSemua">Rp {{ "{:,.0f}".format(total_produk) }}</span>
+                </div>
             </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.7em;">
-                <span>Biaya Pengiriman</span>
-                <span id="biayaKirim">Rp 25.000</span>
-            </div>
-            <hr>
-            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.1em;">
-                <span>Total Pembayaran</span>
-                <span id="totalSemua">Rp {{ "{:,.0f}".format(total_produk + 25000) }}</span>
-            </div>
-        </div>
-        <form action="{{ url_for('cart.checkout') }}" method="post">
-    <button class="checkout-btn" type="submit">Checkout</button>
-</form>
+            <button class="checkout-btn" type="submit" style="margin-top:1.5em;">Checkout</button>
+        </form>
     </div>
     <footer>
         <p>&copy; 2023 Tugas Besar. All rights reserved.</p>
     </footer>
     <script>
+        // Fungsi update ringkasan pembayaran
+        function updateRingkasan() {
+            var totalProduk = {{ total_produk }};
+            var delivery = document.querySelector('input[name="delivery_method"]:checked').value;
+            var biayaKirim = delivery === "delivery" ? 25000 : 0;
+            document.getElementById("biayaKirim").innerText = "Rp " + biayaKirim.toLocaleString('id-ID');
+            document.getElementById("totalSemua").innerText = "Rp " + (totalProduk + biayaKirim).toLocaleString('id-ID');
+        }
+        // Jalankan saat halaman load
+        updateRingkasan();
+
         function updateQty(cartId, newQty) {
             if (newQty < 1) return;
             fetch("/cart/update_qty", {
@@ -287,5 +282,4 @@
             window.onload = updateShipping;
     </script>
 </body>
-
 </html>

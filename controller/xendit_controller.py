@@ -23,13 +23,15 @@ def xendit_webhook():
                 ('PAID', paid_amount, external_id)
             )
             conn.commit()
+            print(f"Rows affected: {cursor.rowcount}")  # Tambahkan ini
             cursor.close()
             conn.close()
             
-            print(f"Order {external_id} updated to PAID")
+            if cursor.rowcount == 0:
+                print(f"TIDAK ADA order dengan external_id {external_id} yang ditemukan!")
+            else:
+                print(f"Order {external_id} updated to PAID")
             return jsonify({'success': True}), 200
-            
-        return jsonify({'success': False, 'message': 'Invalid status'}), 400
         
     except Exception as e:
         print(f"Webhook Error: {str(e)}")
