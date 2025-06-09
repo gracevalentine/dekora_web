@@ -84,9 +84,9 @@ def delete_cart():
         return jsonify(success=True, message="Produk berhasil dihapus dari cart.")
     else:
         return jsonify(success=False, message="Produk tidak ditemukan di cart.")
+    # return jsonify({'success': True})
 
-
-
+# @cart_bp.route('/checkout', methods=['POST'])
 @cart_bp.route('/checkout', methods=['POST'])
 def checkout():
     if not session.get('logged_in'):
@@ -99,7 +99,7 @@ def checkout():
     # Ambil semua item cart
     cursor.execute('''
         SELECT c.cart_id, c.quantity, p.product_id, p.name, p.price,
-               (c.quantity * p.price) as subtotal
+            (c.quantity * p.price) as subtotal
         FROM cart c 
         JOIN products p ON c.product_id = p.product_id 
         WHERE c.user_id = %s
@@ -161,5 +161,3 @@ def checkout():
             'message': 'Gagal membuat invoice',
             'error': response.text
         }), 400
-
-    
