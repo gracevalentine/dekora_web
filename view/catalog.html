@@ -197,7 +197,7 @@
                 <a href="{{ url_for('product.product_detail', product_id=p.product_id) }}">
                     <button style="margin-bottom:0.5em;">Lihat Detail</button>
                 </a>
-                <button>Tambah ke Cart</button>
+                <button class="btn-cart" onclick=`addToCart({{ p.product_id }})`>Tambah ke Cart</button>
             </div>
             {% endfor %}
             {% else %}
@@ -209,5 +209,22 @@
         <p>&copy; 2023 Tugas Besar. All rights reserved.</p>
     </footer>
 </body>
-
+<script>
+function addToCart(productId) {
+    fetch("{{ url_for('cart.add_to_cart') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "product_id=" + productId + "&quantity=1"
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+    })
+    .catch(() => {
+        alert("Gagal menambah ke cart.");
+    });
+}
+</script>
 </html>

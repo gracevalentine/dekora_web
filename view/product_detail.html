@@ -92,7 +92,26 @@
         <div class="stock">Stok: {{ product.stock_quantity }}</div>
         <div class="desc">{{ product.description }}</div>
         <a href="{{ url_for('product.catalog') }}" class="btn-back">← Kembali ke Katalog</a>
-        <button class="btn-cart">Tambah ke Cart</button>
+<button class="btn-cart" onclick="addToCart({{ product.product_id }})">Tambah ke Cart</button>
     </div>
+    <script>
+    function addToCart(productId) {
+        fetch("{{ url_for('cart.add_to_cart') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "product_id=" + productId + "&quantity=1"
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+        })
+        .catch(() => {
+            alert("Gagal menambah ke cart.");
+        });
+    }
+    </script>
 </body>
+
 </html>

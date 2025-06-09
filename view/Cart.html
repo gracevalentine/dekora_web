@@ -155,7 +155,7 @@
         <h1 style="display:flex; justify-content:space-between; align-items:center;">
             Keranjang Belanja
             <span style="font-size:0.5em; background:#f2f2f2; padding:0.5em 1.2em; border-radius:6px; color:#393807;">
-                Total Produk: <span id="totalProdukHeader">Rp 650.000</span>
+                Total Produk: <span id="totalProdukHeader">Rp {{ "{:,.0f}".format(total_produk) }}</span>
             </span>
         </h1>
         <!-- Tabel cart dinamis -->
@@ -170,7 +170,36 @@
                 </tr>
             </thead>
             <tbody id="cartBody">
-                <!-- Diisi oleh JS -->
+                {% if cart_items %}
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        <img src="{{ item.image_url }}" alt="{{ item.name }}"
+                            style="height:40px;vertical-align:middle;margin-right:8px;">
+                        {{ item.name }}
+                    </td>
+                    <td>Rp {{ "{:,.0f}".format(item.price) }}</td>
+                    <td style="text-align:center;">
+                        <button onclick=`updateQty({{ item.cart_id }}, {{ item.quantity - 1 }})`
+                            style="border:none;background:none;font-size:1.2em;cursor:pointer;">➖</button>
+                        <span style="margin:0 0.7em;">{{ item.quantity }}</span>
+                        <button onclick=`updateQty({{ item.cart_id }}, {{ item.quantity + 1 }})`
+                            style="border:none;background:none;font-size:1.2em;cursor:pointer;">➕</button>
+                    </td>
+                    <td>Rp {{ "{:,.0f}".format(item.price * item.quantity) }}</td>
+                    <td>
+                        <button onclick=`deleteCart({{ item.cart_id }})`
+                            style="border:none;background:none;font-size:1.2em;cursor:pointer;" title="Hapus">
+                            🗑️
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="5" class="empty-cart">Keranjang kosong.</td>
+                </tr>
+                {% endif %}
             </tbody>
         </table>
 
@@ -215,82 +244,38 @@
         </div>
         <button class="checkout-btn" onclick="checkout()">Checkout</button>
     </div>
-    <script>
-        // Data produk cart dinamis
-        let cart = [
-            { nama: "Produk A", harga: 150000, jumlah: 1 },
-            { nama: "Produk C", harga: 250000, jumlah: 2 }
-        ];
-        const biayaDelivery = 25000;
-
-        function renderCart() {
-            const tbody = document.getElementById('cartBody');
-            tbody.innerHTML = '';
-            let totalProduk = 0;
-            cart.forEach((item, idx) => {
-                const subtotal = item.harga * item.jumlah;
-                totalProduk += subtotal;
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${item.nama}</td>
-                        <td>Rp ${item.harga.toLocaleString('id-ID')}</td>
-                        <td style="text-align:center;">
-                            <button onclick="changeQty(${idx}, -1)" style="padding:0 6px; margin-right:2px; font-size:1em; border:1px solid #ccc; background:#f2f2f2; color:#393807; border-radius:3px; cursor:pointer;">-</button>
-                            <span id="qty-${idx}" style="display:inline-block; min-width:22px; text-align:center;">${item.jumlah}</span>
-                            <button onclick="changeQty(${idx}, 1)" style="padding:0 6px; margin-left:2px; font-size:1em; border:1px solid #ccc; background:#f2f2f2; color:#393807; border-radius:3px; cursor:pointer;">+</button>
-                        </td>
-                        <td>Rp ${(subtotal).toLocaleString('id-ID')}</td>
-                        <td>
-                            <button onclick="deleteProduct(${idx})" style="background:#c00; color:#fff; border:none; border-radius:4px; padding:4px 10px; cursor:pointer;">Delete</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            document.getElementById('totalProduk').innerText = "Rp " + totalProduk.toLocaleString('id-ID');
-            document.getElementById('totalProdukHeader').innerText = "Rp " + totalProduk.toLocaleString('id-ID');
-            updateShipping();
-        }
-
-        function changeQty(idx, delta) {
-            if (cart[idx].jumlah + delta < 1) return;
-            cart[idx].jumlah += delta;
-            renderCart();
-        }
-
-        function deleteProduct(idx) {
-            cart.splice(idx, 1);
-            renderCart();
-        }
-
-        function updateShipping() {
-            let totalProduk = cart.reduce((sum, item) => sum + item.harga * item.jumlah, 0);
-            const delivery = document.querySelector('input[name="shipping"][value="delivery"]').checked;
-            const biayaKirim = delivery ? biayaDelivery : 0;
-            document.getElementById('biayaKirim').innerText = biayaKirim === 0 ? "Rp 0" : "Rp " + biayaKirim.toLocaleString('id-ID');
-            document.getElementById('totalSemua').innerText = "Rp " + (totalProduk + biayaKirim).toLocaleString('id-ID');
-            document.getElementById('totalProduk').innerText = "Rp " + totalProduk.toLocaleString('id-ID');
-            document.getElementById('totalProdukHeader').innerText = "Rp " + totalProduk.toLocaleString('id-ID');
-            // Tampilkan opsi pick up jika dipilih
-            document.getElementById('pickupOptions').style.display = delivery ? "none" : "block";
-        }
-
-        // Fungsi checkout untuk redirect ke halaman sukses
-        function checkout() {
-            // Simulasi proses pembayaran, bisa tambahkan validasi jika diperlukan
-            window.location.href = "success.html";
-        }
-
-        // Inisialisasi saat halaman dibuka
-        renderCart();
-
-        // Update shipping jika metode berubah
-        document.querySelectorAll('input[name="shipping"]').forEach(el => {
-            el.addEventListener('change', updateShipping);
-        });
-    </script>
     <footer>
         <p>&copy; 2023 Tugas Besar. All rights reserved.</p>
     </footer>
+    <script>
+        function updateQty(cartId, newQty) {
+            if (newQty < 1) return;
+            fetch("/cart/update_qty", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "cart_id=" + cartId + "&quantity=" + newQty
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) location.reload();
+                    else alert(data.message || "Gagal update jumlah.");
+                });
+        }
+
+        function deleteCart(cartId) {
+            if (!confirm("Hapus produk dari cart?")) return;
+            fetch("/cart/delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: "cart_id=" + cartId
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) location.reload();
+                    else alert(data.message || "Gagal hapus produk.");
+                });
+        }
+    </script>
 </body>
 
 </html>
