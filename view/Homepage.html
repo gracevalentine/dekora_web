@@ -186,7 +186,12 @@
     </nav>
     <div class="container">
       <section class="dekorapay-section">
-        <h1>DEKORA</h1>
+        <h1 style="
+          text-align: center;
+          font-size: 2.5em;
+          margin-bottom: 0.5em;
+          font-weight: bold;
+        ">DEKORA</h1>
         <p>Selamat datang di DEKORA</p>
       </section>
 
@@ -220,9 +225,6 @@
             <p style="color: #393807; font-weight: bold; margin: 0.3em 0">
               Rp 100.000
             </p>
-            <button class="topup-btn" style="width: 100%">
-              Tambah ke Cart
-            </button>
           </div>
           <div
             style="
@@ -241,10 +243,8 @@
             />
             <h3 style="font-size: 1.1em; margin: 0.7em 0 0.3em 0">MALM Bed</h3>
             <p style="color: #393807; font-weight: bold; margin: 0.3em 0">
-              Rp 200.000          </p>
-            <button class="topup-btn" style="width: 100%">
-              Tambah ke Cart
-            </button>
+              Rp 200.000
+            </p>
           </div>
           <div
             style="
@@ -264,10 +264,7 @@
             <h3 style="font-size: 1.1em; margin: 0.7em 0 0.3em 0">Poang Chair</h3>
             <p style="color: #393807; font-weight: bold; margin: 0.3em 0">
               Rp 75.000
-            </p>
-            <button class="topup-btn" style="width: 100%">
-              Tambah ke Cart
-            </button>
+            </p>  
           </div>
         </div>
       </section>
@@ -276,29 +273,12 @@
         <p>&copy; 2025 Dekora. All rights reserved.</p>
     </footer>
     <script>
-      function formatRupiah(angka) {
-        return "Rp " + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-      }
-
-      function updateSaldo() {
-        fetch("{{ url_for('user.get_wallet') }}")
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success) {
-              document.getElementById("saldo").textContent =
-                "Rp " + data.wallet.toLocaleString("id-ID");
-            }
-          });
-      }
-
       setTimeout(function () {
         var flash = document.querySelector(".flash.success");
         if (flash) {
           flash.style.display = "none";
         }
       }, 2000);
-
-      updateSaldo();
     </script>
   </body>
 </html>
