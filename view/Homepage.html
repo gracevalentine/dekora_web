@@ -34,11 +34,11 @@
     <!-- Logo di kiri -->
     <li style="margin: 0;">
         <a href="{{ url_for('index') }}" style="display: flex; align-items: center;">
-            <img src="dekora.png" alt="Dekora Logo" style="height:32px; margin-right: 0.5em;">
+            <img src="{{ url_for('static', filename='dekora.png') }}" alt="Dekora Logo" style="height:32px; margin-right: 0.5em;">
         </a>
     </li>
     <!-- Menu di kanan -->
-    <div style="display: flex; gap: 1.5em; align-items: center;">
+    <div style="display: flex; align-items: center;">
         <li>
             <a href="{{ url_for('product.catalog') }}" style="background: #393807; color: #fff; padding: 0.5em 1.2em; border-radius: 4px; text-decoration: none; font-weight: bold; display: flex; align-items: center;">
                 <span style="margin-right: 0.5em;">🔍</span>View Catalog

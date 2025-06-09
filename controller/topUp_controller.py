@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from controller.db_config import get_db_connection as get_db
 
 topup_bp = Blueprint('topup', __name__)
