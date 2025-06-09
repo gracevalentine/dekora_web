@@ -129,10 +129,21 @@ function updateSaldo() {
             if(data.success) {
                 document.getElementById('saldo').textContent = "Rp " + data.wallet.toLocaleString('id-ID');
             }
+<<<<<<< Updated upstream
         });
 }
 
 updateSaldo();
+=======
+        }
+
+            setTimeout(function() {
+        var flash = document.querySelector('.flash.success');
+        if (flash) {
+            flash.style.display = 'none';
+        }
+    }, 2000);
+>>>>>>> Stashed changes
     </script>
 </body>
 </html>
