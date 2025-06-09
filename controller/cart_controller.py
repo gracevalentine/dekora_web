@@ -67,18 +67,20 @@ def update_qty():
     conn.close()
     return jsonify({'success': True})
 
-@cart_bp.route('/delete', methods=['POST'])
+@cart_bp.route('/cart/delete', methods=['POST'])
 def delete_cart():
-    if not session.get('logged_in'):
-        return jsonify({'success': False, 'message': 'Silakan login terlebih dahulu.'}), 401
-    user_id = session['user_id']
     cart_id = request.form.get('cart_id')
+    if not cart_id:
+        return jsonify(success=False, message="Cart ID tidak ditemukan.")
+
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM cart WHERE cart_id = %s AND user_id = %s', (cart_id, user_id))
+    cursor.execute("DELETE FROM cart WHERE cart_id = %s", (cart_id,))
     conn.commit()
+    deleted = cursor.rowcount
     cursor.close()
     conn.close()
+<<<<<<< Updated upstream
     return jsonify({'success': True})
 
 
@@ -158,3 +160,10 @@ def checkout():
             'message': 'Gagal membuat invoice',
             'error': response.text
         }), 400
+=======
+
+    if deleted:
+        return jsonify(success=True, message="Produk berhasil dihapus dari cart.")
+    else:
+        return jsonify(success=False, message="Produk tidak ditemukan di cart.")
+>>>>>>> Stashed changes
