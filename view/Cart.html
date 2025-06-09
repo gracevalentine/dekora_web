@@ -169,22 +169,22 @@
                 {% for item in cart_items %}
                 <tr>
                     <td>
-                        <img src="{{ item.image_url }}" alt="{{ item.name }}"
-                            style="height:40px;vertical-align:middle;margin-right:8px;">
+                        <img src="{{ url_for('static', filename=item.image_url) }}" alt="{{ item.name }}"
+                        style="width:80px; height:80px; object-fit:cover; margin-right:1em; vertical-align:middle;">
                     </td>
                     <td>Rp {{ "{:,.0f}".format(item.price) }}</td>
                     <td style="text-align:center;">
-                        <button onclick=`updateQty({{ item.cart_id }}, {{ item.quantity - 1 }})`
+                        <button onclick=updateQty({{ item.cart_id }}, {{ item.quantity - 1 }})
                             style="border:none;background:none;font-size:1.2em;cursor:pointer;">➖</button>
                         <span style="margin:0 0.7em;">{{ item.quantity }}</span>
-                        <button onclick=`updateQty({{ item.cart_id }}, {{ item.quantity + 1 }})`
+                        <button onclick=updateQty({{ item.cart_id }}, {{ item.quantity + 1 }})
                             style="border:none;background:none;font-size:1.2em;cursor:pointer;">➕</button>
                     </td>
                     <td>Rp {{ "{:,.0f}".format(item.price * item.quantity) }}</td>
                     <td>
-                        <button onclick=`deleteCart({{ item.cart_id }})`
+                        <button onclick=deleteCart({{ item.cart_id }})
                             style="border:none;background:none;font-size:1.2em;cursor:pointer;" title="Hapus">
-                            🗑️
+                            🗑
                         </button>
                     </td>
                 </tr>
