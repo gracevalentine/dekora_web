@@ -21,6 +21,7 @@ def cart():
     cursor.close()
     conn.close()
     return render_template('Cart.html', cart_items=cart_items, total_produk=total_produk)
+
 @cart_bp.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
     if not session.get('logged_in'):
