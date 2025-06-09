@@ -80,12 +80,13 @@ def delete_cart():
     deleted = cursor.rowcount
     cursor.close()
     conn.close()
-<<<<<<< Updated upstream
-    return jsonify({'success': True})
+    if deleted:
+        return jsonify(success=True, message="Produk berhasil dihapus dari cart.")
+    else:
+        return jsonify(success=False, message="Produk tidak ditemukan di cart.")
 
 
 
-@cart_bp.route('/checkout', methods=['POST'])
 @cart_bp.route('/checkout', methods=['POST'])
 def checkout():
     if not session.get('logged_in'):
@@ -160,10 +161,5 @@ def checkout():
             'message': 'Gagal membuat invoice',
             'error': response.text
         }), 400
-=======
 
-    if deleted:
-        return jsonify(success=True, message="Produk berhasil dihapus dari cart.")
-    else:
-        return jsonify(success=False, message="Produk tidak ditemukan di cart.")
->>>>>>> Stashed changes
+    

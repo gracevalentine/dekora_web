@@ -224,7 +224,7 @@
             <h3>Ringkasan Pembayaran</h3>
             <div style="display:flex; justify-content:space-between; margin-bottom:0.7em;">
                 <span>Total Produk</span>
-                <span id="totalProduk">Rp 650.000</span>
+                <span id="totalProduk">Rp {{ "{:,.0f}".format(total_produk) }}</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom:0.7em;">
                 <span>Biaya Pengiriman</span>
@@ -233,7 +233,7 @@
             <hr>
             <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.1em;">
                 <span>Total Pembayaran</span>
-                <span id="totalSemua">Rp 675.000</span>
+                <span id="totalSemua">Rp {{ "{:,.0f}".format(total_produk + 25000) }}</span>
             </div>
         </div>
         <form action="{{ url_for('cart.checkout') }}" method="post">
@@ -271,6 +271,20 @@
                     else alert(data.message || "Gagal hapus produk.");
                 });
         }
+
+        function updateShipping() {
+                let totalProduk = {{ total_produk }};
+                let biayaKirim = document.querySelector('input[name="shipping"]:checked').value === 'pickup' ? 0 : 25000;
+                document.getElementById('biayaKirim').innerText = "Rp " + biayaKirim.toLocaleString('id-ID');
+                document.getElementById('totalSemua').innerText = "Rp " + (totalProduk + biayaKirim).toLocaleString('id-ID');
+                // Tampilkan/hidden opsi pickup
+                document.getElementById('pickupOptions').style.display =
+                    (biayaKirim === 0) ? 'block' : 'none';
+            }
+            document.querySelectorAll('input[name="shipping"]').forEach(el => {
+                el.addEventListener('change', updateShipping);
+            });
+            window.onload = updateShipping;
     </script>
 </body>
 

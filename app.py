@@ -5,9 +5,6 @@ from controller.cart_controller import cart_bp
 from controller.topUp_controller import topup_bp
 from controller.xendit_controller import xendit_bp
 
-
-
-
 app = Flask(__name__, template_folder='view')
 app.secret_key = '123'
 app.register_blueprint(user_bp)
