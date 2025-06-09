@@ -104,7 +104,7 @@
       <a href="{{ url_for('product.catalog') }}" class="btn-back"
         >← Kembali ke Katalog</a
       >
-      <button class="btn-cart" onclick="addToCart({{ product.product_id }})">
+      <button class="btn-cart" onclick="addToCart('{{ product.product_id }}')">
         Tambah ke Cart
       </button>
     </div>
