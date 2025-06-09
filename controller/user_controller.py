@@ -193,20 +193,55 @@ def profile():
     user_id = session.get('user_id')
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM users WHERE user_id = %s', (user_id,))
+
+    # Ambil data user untuk ditampilkan
+    cursor.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
     user = cursor.fetchone()
+
+    success = None
+    error = None
+
+    if request.method == 'POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        address = request.form['address']
+        postal_code = request.form['postal_code']
+        email = request.form['email']
+        current_password = request.form['current_password']
+        new_password = request.form.get('new_password')
+        confirm_new_password = request.form.get('confirm_new_password')
+        confirm_change_password = request.form.get('confirm_change_password')
+
+        # Cek password lama benar
+        cursor.execute("SELECT * FROM users WHERE user_id = %s AND password = %s", (user_id, current_password))
+        user_check = cursor.fetchone()
+        if not user_check:
+            error = "Password lama salah."
+        else:
+            # Update data profil
+            cursor.execute("""
+                UPDATE users SET first_name=%s, last_name=%s, address=%s, postal_code=%s, email=%s
+                WHERE user_id=%s
+            """, (first_name, last_name, address, postal_code, email, user_id))
+
+            # Jika user ingin ganti password dan konfirmasi benar
+            if confirm_change_password and new_password and new_password == confirm_new_password:
+                cursor.execute("UPDATE users SET password=%s WHERE user_id=%s", (new_password, user_id))
+                success = "Profil dan password berhasil diupdate."
+            elif confirm_change_password:
+                error = "Konfirmasi password baru tidak cocok."
+            else:
+                success = "Profil berhasil diupdate."
+
+            conn.commit()
+
+        # Refresh data user setelah update
+        cursor.execute("SELECT * FROM users WHERE user_id = %s", (user_id,))
+        user = cursor.fetchone()
+
     cursor.close()
     conn.close()
-
-    if not user:
-        return redirect(url_for('user.logout'))
-
-    # Jika POST, proses update profile di sini (opsional)
-    if request.method == 'POST':
-        # ...proses update profile...
-        pass
-
-    return render_template('profile.html', user=user)
+    return render_template('profile.html', user=user, success=success, error=error)
 
 @user_bp.route('/api/wallet', methods=['GET'])
 def get_wallet():
