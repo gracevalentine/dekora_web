@@ -164,3 +164,17 @@ def checkout():
             'message': 'Gagal membuat invoice',
             'error': response.text
         }), 400
+        
+@cart_bp.route('/clear_cart', methods=['POST'])
+def clear_cart():
+    if not session.get('logged_in'):
+        return jsonify({'success': False, 'message': 'Silakan login terlebih dahulu.'}), 401
+
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM cart WHERE user_id = %s', (user_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({'success': True, 'message': 'Cart berhasil dikosongkan.'})

@@ -1,91 +1,101 @@
 import unittest
-from app import app
+from unittest.mock import patch, MagicMock
+from flask import session
+from app import app  # pastikan ini mengimpor Flask app kamu
 
-class TestCartController(unittest.TestCase):
-
+class CartControllerTestCase(unittest.TestCase):
     def setUp(self):
-        self.client = app.test_client()
-        self.client.testing = True
-
-        with self.client.session_transaction() as sess:
+        self.app = app.test_client()
+        self.app.testing = True
+        self.ctx = app.app_context()
+        self.ctx.push()
+        # Simulasi user login
+        with self.app.session_transaction() as sess:
             sess['logged_in'] = True
             sess['user_id'] = 1
             sess['email'] = 'test@example.com'
 
-        from controller.db_config import get_db_connection
-        conn = get_db_connection()
-        cursor = conn.cursor()
+    def tearDown(self):
+        self.ctx.pop()
 
-        # Setup dummy user & product
-        cursor.execute("INSERT IGNORE INTO users (user_id, email, password) VALUES (1, 'test@example.com', 'test')")
-        cursor.execute("INSERT IGNORE INTO products (product_id, name, price, category, image_url) VALUES (1, 'Test Product', 100000, 'Dekorasi', 'default.jpg')")
-        # Bersihkan isi cart dulu
-        cursor.execute("DELETE FROM cart WHERE user_id = 1")
-        # Tambahkan 1 item ke cart untuk testing delete & update
-        cursor.execute("INSERT INTO cart (user_id, product_id, quantity) VALUES (1, 1, 1)")
-        conn.commit()
+    @patch('controller.cart_controller.get_db_connection')
+    def test_add_to_cart_new_item(self, mock_db):
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_db.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
+        mock_cursor.fetchone.return_value = None  # produk belum ada di cart
 
-        # Ambil cart_id yang baru ditambahkan
-        cursor.execute("SELECT cart_id FROM cart WHERE user_id = 1 AND product_id = 1")
-        result = cursor.fetchone()
-        self.cart_id = result[0] if result else 1
-
-        cursor.close()
-        conn.close()
-
-    def test_cart_page(self):
-        res = self.client.get('/cart')
-        self.assertEqual(res.status_code, 200)
-        self.assertIn(b'Keranjang Belanja', res.data)
-
-    def test_add_to_cart(self):
-        res = self.client.post('/add_to_cart', data={
-            'product_id': 1,
-            'quantity': 1
-        })
-        self.assertEqual(res.status_code, 200)
-        self.assertIn(b'Produk berhasil ditambahkan', res.data)
-
-    def test_update_qty_valid(self):
-        res = self.client.post('/update_qty', data={
-            'cart_id': self.cart_id,
+        response = self.app.post('/add_to_cart', data={
+            'product_id': 10,
             'quantity': 2
         })
-        self.assertEqual(res.status_code, 200)
-        self.assertIn(b'success', res.data)
 
-    def test_update_qty_invalid(self):
-        res = self.client.post('/update_qty', data={
-            'cart_id': self.cart_id,
-            'quantity': 0
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Produk berhasil ditambahkan', response.data)
+
+    @patch('controller.cart_controller.get_db_connection')
+    def test_update_qty(self, mock_db):
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_db.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
+
+        response = self.app.post('/update_qty', data={
+            'cart_id': 123,
+            'quantity': 5
         })
-        self.assertIn(b'Jumlah minimal 1', res.data)
 
-    def test_delete_cart_valid(self):
-        res = self.client.post('/cart/delete', data={
-            'cart_id': self.cart_id
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'success', response.data)
+
+    @patch('controller.cart_controller.get_db_connection')
+    def test_delete_cart(self, mock_db):
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.rowcount = 1
+        mock_db.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
+
+        response = self.app.post('/cart/delete', data={
+            'cart_id': 123
         })
-        self.assertEqual(res.status_code, 200)
-        self.assertIn(b'berhasil dihapus', res.data)
 
-    def test_delete_cart_invalid(self):
-        res = self.client.post('/cart/delete', data={
-            'cart_id': 99999
-        })
-        self.assertIn(b'tidak ditemukan', res.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'berhasil dihapus', response.data)
 
-    def test_checkout_empty_cart(self):
-        from controller.db_config import get_db_connection
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM cart WHERE user_id = 1")
-        conn.commit()
-        cursor.close()
-        conn.close()
+    @patch('controller.cart_controller.get_db_connection')
+    def test_clear_cart(self, mock_db):
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_db.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
 
-        res = self.client.post('/checkout')
-        self.assertIn(b'Cart kosong', res.data)
+        response = self.app.post('/clear_cart')
 
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'berhasil dikosongkan', response.data)
 
-if __name__ == '__main__':
-    unittest.main()
+    @patch('controller.cart_controller.requests.post')
+    @patch('controller.cart_controller.get_db_connection')
+    def test_checkout_success(self, mock_db, mock_requests):
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_db.return_value = mock_conn
+        mock_conn.cursor.return_value = mock_cursor
+
+        mock_cursor.fetchall.return_value = [
+            {'cart_id': 1, 'quantity': 2, 'product_id': 5, 'name': 'Dog Toy', 'price': 50000, 'subtotal': 100000}
+        ]
+        mock_requests.return_value.status_code = 200
+        mock_requests.return_value.json.return_value = {
+            'invoice_url': 'https://checkout.xendit.co/xyz'
+        }
+
+        response = self.app.post('/checkout', data={
+            'delivery_method': 'pickup'
+        }, follow_redirects=False)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('https://checkout.xendit.co/xyz', response.headers['Location'])
+

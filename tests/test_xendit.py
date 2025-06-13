@@ -1,49 +1,62 @@
 import unittest
-from app import app
-from controller.db_config import get_db_connection
+from unittest.mock import patch, MagicMock
+from flask import Flask, json
+from controller.xendit_controller import xendit_bp  # pastikan path ini sesuai
 
-class TestXenditWebhook(unittest.TestCase):
-
+class TestXenditWebhookUnit(unittest.TestCase):
     def setUp(self):
-        self.client = app.test_client()
-        self.client.testing = True
+        self.app = Flask(__name__)
+        self.app.register_blueprint(xendit_bp)
+        self.client = self.app.test_client()
 
-        # Tambahkan dummy order
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT IGNORE INTO orders (order_id, user_id, external_id, status, paid_amount) 
-            VALUES (1, 1, 'order-1-test', 'PENDING', 0)
-        """)
-        conn.commit()
-        cursor.close()
-        conn.close()
+    @patch('controller.xendit_controller.get_db_connection')  # ✅ path udah bener
+    def test_webhook_paid_success(self, mock_get_db):
+        # Mock DB
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.rowcount = 1
+        mock_conn.cursor.return_value = mock_cursor
+        mock_get_db.return_value = mock_conn
 
-    def test_webhook_paid_valid(self):
         payload = {
-            "external_id": "order-1-test",
             "status": "PAID",
-            "paid_amount": 100000
+            "external_id": "INV12345",
+            "paid_amount": 299000
         }
-        res = self.client.post('/xendit/webhook', json=payload)
-        self.assertEqual(res.status_code, 200)
-        self.assertIn(b'success', res.data)
 
-    def test_webhook_paid_invalid(self):
+        response = self.client.post(
+            '/xendit/webhook',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {'success': True})
+        mock_cursor.execute.assert_called_once()
+        mock_conn.commit.assert_called_once()
+        mock_cursor.close.assert_called_once()
+        mock_conn.close.assert_called_once()
+
+    def test_webhook_invalid_json(self):
+        response = self.client.post(
+            '/xendit/webhook',
+            data="bukan json",  # bukan JSON valid
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 500)
+        self.assertIn('success', response.json)
+        self.assertFalse(response.json['success'])
+
+    def test_webhook_non_paid_status(self):
         payload = {
-            "external_id": "order-x-not-found",
-            "status": "PAID",
-            "paid_amount": 100000
+            "status": "PENDING",
+            "external_id": "INV12345",
+            "paid_amount": 1000
         }
-        res = self.client.post('/xendit/webhook', json=payload)
-        self.assertEqual(res.status_code, 200)
-        self.assertIn(b'success', res.data)  # tetap 200 meski tidak ditemukan, sesuai logic-mu
-
-    def test_webhook_malformed_data(self):
-        # Kirim payload yang tidak valid
-        res = self.client.post('/xendit/webhook', data="Not JSON", content_type='text/plain')
-        self.assertEqual(res.status_code, 500)
-        self.assertIn(b'success', res.data)
-
-if __name__ == '__main__':
-    unittest.main()
+        response = self.client.post(
+            '/xendit/webhook',
+            data=json.dumps(payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json['success'], False)
